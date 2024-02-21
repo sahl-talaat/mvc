@@ -83,7 +83,7 @@ class Employee{
             });
             if (it != emp_table.end())
                 return *it;
-            return EmpData(0,"","",0.0);
+            return EmpData{};
         }
         EmpData search_by_name(std::string emp_name){
             auto it = std::find_if(emp_table.begin(), emp_table.end(), [emp_name](const EmpData& employee){
@@ -91,7 +91,7 @@ class Employee{
             });
             if (it != emp_table.end())
                 return *it;
-            return EmpData(0,"","",0.0);
+            return EmpData{};
         }
 };
 
