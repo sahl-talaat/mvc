@@ -63,7 +63,7 @@ class Employee{
             save_new_data();
         }
         // read
-        EmpData display_by_roll_number(int emp_roll_number){
+       /*  EmpData display_by_roll_number(int emp_roll_number){
             for (auto employee : emp_table){
                 if (employee.roll_number == emp_roll_number)
                     return employee;
@@ -75,7 +75,8 @@ class Employee{
                 if (employee.name == name)
                 return employee;
             }
-        }
+        } */
+
         // search
         EmpData search_by_roll_number(int emp_roll_number){
             auto it = std::find_if(emp_table.begin(), emp_table.end(), [emp_roll_number](const EmpData& employee){
@@ -85,6 +86,7 @@ class Employee{
                 return *it;
             return EmpData{};
         }
+
         EmpData search_by_name(std::string emp_name){
             auto it = std::find_if(emp_table.begin(), emp_table.end(), [emp_name](const EmpData& employee){
                 return employee.name == emp_name;
@@ -92,6 +94,44 @@ class Employee{
             if (it != emp_table.end())
                 return *it;
             return EmpData{};
+        }
+
+        // update
+        bool update_name_by_roll_number(int emp_roll_number, std::string& new_name){
+            bool found = false;
+            for (auto employee : emp_table){
+                if(employee.roll_number == emp_roll_number){
+                    employee.set_name(new_name);
+                    save_new_data();
+                    found = true;
+                    break;
+                }    
+            }
+            return found;
+        }
+        bool update_salary_by_roll_number(int emp_roll_number, double new_salary){
+            bool found = false;
+            for (auto employee : emp_table){
+                if(employee.roll_number == emp_roll_number){
+                    employee.set_salary(new_salary);
+                    save_new_data();
+                    found = true;
+                    break;
+                }    
+            }
+            return found;
+        }
+        bool update_specialization_by_roll_number(int emp_roll_number, std::string new_specialization){
+            bool found = false;
+            for (auto employee : emp_table){
+                if(employee.roll_number == emp_roll_number){
+                    employee.set_specialization(new_specialization);
+                    save_new_data();
+                    found = true;
+                    break;
+                }    
+            }
+            return found;
         }
 };
 
