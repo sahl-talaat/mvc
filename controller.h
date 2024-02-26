@@ -13,9 +13,6 @@ class Controller{
             this->model = employee;
             this->view = view;
         }
-        void access_all_data(){
-            model.get_all_employee();
-        }
 
         void create_new_employee(){
             EmpData employee = view.add_new_employee();
@@ -33,7 +30,7 @@ class Controller{
             if(employee.name.length() >= 1)
                 view.display_employee_data(employee.roll_number,employee.name,employee.specialization,employee.salary);
             else
-                view.display_not_found(emp_name);
+                view.display_not_found(emp_name,0);
         }
 
         void search_by_roll_number(){
@@ -42,7 +39,7 @@ class Controller{
             if(employee.name.length() >= 1)
                 view.display_employee_data(employee.roll_number,employee.name,employee.specialization,employee.salary);
             else
-                view.display_not_found(emp_roll_number);
+                view.display_not_found("",emp_roll_number);
         }
 
         void update_name_by_roll(){
@@ -53,7 +50,7 @@ class Controller{
                 view.updated_succesfully();
             }
             else{
-                view.display_not_found(roll_number);
+                view.display_not_found("",roll_number);
             }
         }
         void update_specialization_by_roll(){
@@ -64,7 +61,7 @@ class Controller{
                 view.updated_succesfully();
             }
             else{
-                view.display_not_found(roll_number);
+                view.display_not_found("",roll_number);
             }
         }
         void update_salary_by_roll(){
@@ -75,7 +72,7 @@ class Controller{
                 view.updated_succesfully();
             }
             else{
-                view.display_not_found(roll_number);
+                view.display_not_found("",roll_number);
             }
         }
 };

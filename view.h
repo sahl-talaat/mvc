@@ -5,11 +5,27 @@
 #define VIEW
 class View{
     public:
+        int index_view(){
+            int choice{};
+            std::cout<<"\t\tmain page\n";
+            std::cout<<"\t1. add new employee\n";
+            std::cout<<"\t2. search by employee roll number\n";
+            std::cout<<"\t3. search by employee name\n";
+            std::cout<<"\t4. update employee name\n";
+            std::cout<<"\t5. update employee specialization\n";
+            std::cout<<"\t6. update employee salary\n";
+            std::cout<<"\t7. delete employee\n";
+            std::cin>>choice;
+            return choice;
+        }
         void display_employee_data(int roll_number, std::string name, std::string specialization, double salary){
             std::cout << "=> Roll Number: " << roll_number<< ", Name: " << name << ", Specialization: " << specialization << ", Salary: " << salary << std::endl;
         }
-        void display_not_found(auto vlaue){
-            std::cout<<"employee "<<vlaue<<" Not Found\n";
+        void display_not_found(std::string name, int roll_number){
+            if (name.length() < 1)
+                std::cout<<"employee "<<roll_number<<" Not Found\n";
+            else
+                std::cout<<"employee "<<name<<" Not Found\n";
         }
         EmpData add_new_employee(){
             int roll_number; 
