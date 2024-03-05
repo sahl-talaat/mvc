@@ -9,6 +9,7 @@ std::map<int, std::function<void()>> registery;
 int main(){
     std::string file_name = "employee.txt";
     Employee employee(file_name);
+    employee.get_all_employee();
     View view;
     Controller controller(employee, view);
     registery.insert({1, std::bind(&Controller::create_new_employee, &controller)});
