@@ -15,5 +15,16 @@ struct EmpData{
                 this->specialization = specialization;
                 this->salary = salary;
             }
+            void set_name(const std::string& new_name){
+                this->name = new_name;
+            }
+
+            void set_salary(double new_salary){
+                this->salary = new_salary;
+            }
+
+            void set_specialization(std::string new_specialization){
+                this->specialization = new_specialization;
+            }
     };
 #endif
