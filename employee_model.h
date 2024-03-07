@@ -2,47 +2,44 @@
 #include<algorithm>
 #include<fstream>
 #include<vector>
+#include "sqlite_orm.h"
 #include"employee_data.h"
+
+using namespace sqlite_orm;
 
 #ifndef EMPLOYEE
 #define EMPLOYEE
 
 class Employee{
     private:
-    // emp = employee
     
     std::string data_base;
+
+    decltype(make_storage({},
+    make_table("employees",
+    make_column("roll_number", &EmpData::roll_number, primary_key()),
+    make_column("name", &EmpData::name),
+    make_column("specialization", &EmpData::specialization),
+    make_column("salary", &EmpData::salary)))) storage;
+
     std::vector<EmpData> emp_table;
     public:
-        Employee(){}
-        Employee(std::string data_file){
-            this->data_base = data_file;
+        Employee() : storage(make_storage("employee.db",
+            make_table("employees",
+                make_column("roll_number", &EmpData::roll_number, primary_key()),
+                make_column("name", &EmpData::name),
+                make_column("specialization", &EmpData::specialization),
+                make_column("salary", &EmpData::salary)
+            )
+        )) {
+            storage.sync_schema();
+            get_all_employee();
         }
         void get_all_employee(){
-            std::ifstream file(data_base);
-            if (file.is_open()){
-                int roll_number{};
-                std::string name{}, specialization{};
-                double salary{};
-                //emp_table.clear();
-                while (file >> roll_number >> name >> specialization >> salary){
-                    /* EmpData emp;
-                    emp.roll_number=roll_number */
-                    emp_table.emplace_back(roll_number, name, specialization, salary);
-                }
-                file.close();
-            }
-            
+            emp_table = storage.get_all<EmpData>();
         }
         void save_new_data(){
-            std::ofstream file(data_base);
-            if (file.is_open()){
-                file.clear();
-                for (auto employee : emp_table){
-                    file << employee.roll_number << " " << employee.name << " " << employee.specialization << " " << employee.salary << std::endl;
-                }
-            }
-            file.close();
+            storage.replace(emp_table.begin(), emp_table.end());
         }
         ~Employee(){
             emp_table.clear();
@@ -53,7 +50,47 @@ class Employee{
             save_new_data();
         }
         // delete
-        void delete_employee(int emp_roll_number){
+        bool delete_employee(int roll_number) {
+            auto deleted = storage.remove_all<EmpData>(where(c(&EmpData::roll_number) == roll_number));
+            get_all_employee(); // Refresh employee data after deletion
+            return deleted > 0;
+        }
+
+        // search
+        EmpData search_by_roll_number(int roll_number) {
+            return storage.get_all<EmpData>(where(c(&EmpData::roll_number) == roll_number)).front_or(EmpData{});
+        }
+
+        // update
+        bool update_name_by_roll_number(int roll_number, const std::string& new_name){
+            auto updated = storage.update<EmpData>(
+                set(c(&EmpData::name) = new_name),
+                where(c(&EmpData::roll_number) == roll_number)
+            );
+            get_all_employee(); // Refresh employee data after update
+            return updated > 0;
+        }
+
+        bool update_salary_by_roll_number(int roll_number, double new_salary){
+             auto updated = storage.update<EmpData>(
+                set(c(&EmpData::salary) = new_salary),
+                where(c(&EmpData::roll_number) == roll_number)
+            );
+            get_all_employee(); // Refresh employee data after update
+            return updated > 0;
+        }
+
+        bool update_specialization_by_roll_number(int roll_number, const std::string& new_specialization){
+             auto updated = storage.update<EmpData>(
+                set(c(&EmpData::specialization) = new_specialization),
+                where(c(&EmpData::roll_number) == roll_number)
+            );
+            get_all_employee(); // Refresh employee data after update
+            return updated > 0;
+        }
+
+
+       /*  void delete_employee(int emp_roll_number){
             auto it = std::find_if(emp_table.begin(), emp_table.end(), [emp_roll_number](const EmpData& employee){
                 return employee.roll_number == emp_roll_number;
             });
@@ -61,43 +98,27 @@ class Employee{
                 emp_table.erase(it);
             }
             save_new_data();
-        }
-        // read
-       /*  EmpData display_by_roll_number(int emp_roll_number){
-            for (auto employee : emp_table){
-                if (employee.roll_number == emp_roll_number)
-                    return employee;
-            }
-            //return NULL;
-        }
-        EmpData display_by_name(std::string name){
-            for (auto employee : emp_table){
-                if (employee.name == name)
-                return employee;
-            }
         } */
 
-        // search
-        EmpData search_by_roll_number(int emp_roll_number){
+        /* EmpData search_by_roll_number(int emp_roll_number){
             auto it = std::find_if(emp_table.begin(), emp_table.end(), [emp_roll_number](const EmpData& employee){
                 return employee.roll_number == emp_roll_number;
             });
             if (it != emp_table.end())
                 return *it;
             return EmpData{};
-        }
+        } */
 
-        EmpData search_by_name(std::string emp_name){
+        /* EmpData search_by_name(std::string emp_name){
             auto it = std::find_if(emp_table.begin(), emp_table.end(), [emp_name](const EmpData& employee){
                 return employee.name == emp_name;
             });
             if (it != emp_table.end())
                 return *it;
             return EmpData{};
-        }
+        } */
 
-        // update
-        bool update_name_by_roll_number(int emp_roll_number, std::string& new_name){
+       /*  bool update_name_by_roll_number(int emp_roll_number, std::string& new_name){
             bool found = false;
             for (auto employee : emp_table){
                 if(employee.roll_number == emp_roll_number){
@@ -108,8 +129,9 @@ class Employee{
                 }    
             }
             return found;
-        }
-        bool update_salary_by_roll_number(int emp_roll_number, double new_salary){
+        } */
+
+         /* bool update_salary_by_roll_number(int emp_roll_number, double new_salary){
             bool found = false;
             for (auto employee : emp_table){
                 if(employee.roll_number == emp_roll_number){
@@ -120,8 +142,9 @@ class Employee{
                 }    
             }
             return found;
-        }
-        bool update_specialization_by_roll_number(int emp_roll_number, std::string new_specialization){
+        } */
+
+        /* bool update_specialization_by_roll_number(int emp_roll_number, std::string new_specialization){
             bool found = false;
             for (auto employee : emp_table){
                 if(employee.roll_number == emp_roll_number){
@@ -132,7 +155,7 @@ class Employee{
                 }    
             }
             return found;
-        }
+        } */
 };
 
 #endif
